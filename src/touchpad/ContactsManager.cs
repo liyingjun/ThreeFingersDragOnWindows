@@ -9,6 +9,7 @@ namespace ThreeFingersDragOnWindows.src.touchpad;
 public class ContactsManager<T> where T : Window, IContactsManager {
     private readonly List<TouchpadContact> _lastContacts = new();
     private readonly T _source;
+    private long _lastInput;
 
     private HwndSource _targetSource;
 
@@ -45,11 +46,14 @@ public class ContactsManager<T> where T : Window, IContactsManager {
         foreach(var lastContact in _lastContacts)
             if(lastContact.ContactId == contact.ContactId){
                 // A contact is registered twice: send the event with the list of all contacts
-                _source.OnTouchpadContact(_lastContacts.ToArray());
+                if ((new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds()) - _lastInput < 20) {
+                    _source.OnTouchpadContact(_lastContacts.ToArray());
+                }
                 _lastContacts.Clear();
                 break;
             }
 
+        _lastInput = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
         // Add the contact to the list
         _lastContacts.Add(contact);
     }
