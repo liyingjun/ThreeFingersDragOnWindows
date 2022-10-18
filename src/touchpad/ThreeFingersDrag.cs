@@ -54,7 +54,10 @@ public class ThreeFingersDrag {
                     // Apply acceleration
                     dist2d.Multiply(pointerVelocity);
 
-                    MouseOperations.ShiftCursorPosition(dist2d.x, dist2d.y);
+                    if (!(Math.Abs(dist2d.x) > 100 || Math.Abs(dist2d.y) > 100))
+                    {
+                        MouseOperations.ShiftCursorPosition(dist2d.x, dist2d.y);
+                    }
                 }
                 
                 _lastPoints = points;
